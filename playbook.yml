@@ -3,6 +3,10 @@
   become: true
   gather_facts: true
   tasks:
+    - name: Import apache Role
+      import_role:
+        name: "apache"
+      when: "'haproxy' in group_names"
     - name: Import haproxy Role
       import_role:
         name: "haproxy"
