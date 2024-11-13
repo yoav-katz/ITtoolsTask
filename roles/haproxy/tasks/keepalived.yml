@@ -8,4 +8,4 @@
     src: keepalived.conf.j2
     dest: /etc/keepalived/keepalived.conf
   notify:
-    - Restat keepalived
+    - Restart HAProxy
