@@ -1,0 +1,37 @@
+global
+  log 127.0.0.1 local2
+  user        haproxy
+  group       haproxy
+  daemon
+  maxconn     4000
+  ca-base /etc/ssl/certs
+
+defaults
+  log global
+  mode  http
+  option  httplog
+  option  dontlognull
+  timeout connect 5000
+  timeout client 50000
+  timeout server 50000
+
+frontend ha-front-ssl
+  bind *:443 ssl crt /etc/ssl/private/server.pem
+  mode http
+  option forwardfor
+  default_backend be_roundrobin
+  {% for server in group['webservers'] %}
+    use_backend be_{{ hostvars[server].ansible_nodename }} if { req.hdr(host) hostvars[server].ansible_fqdn }
+  {% endfor %}
+
+# Backend Configuration
+backend be_roundrobin
+  balance roundrobin
+  {% for server in group['webservers'] %}
+    server {{ hostvars[server].ansible_nodename }} {{ hostvars[server].inventory_hostname }}:443 check ssl verify required ca-file ca.crt
+  {% endfor %}
+
+{% for server in group['webservers'] %}
+backend be_{{ hostvars[server].ansible_nodename }}
+    server {{ hostvars[server].ansible_nodename }} {{ hostvars[server].inventory_hostname }}:443 check ssl verify required ca-file ca.crt
+{% endfor %}

@@ -1,2 +1,5 @@
 ---
-# handlers file for haproxy
+- name: Restat HAProxy
+  service:
+    name: haproxy
+    state: restarted
