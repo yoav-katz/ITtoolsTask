@@ -40,7 +40,7 @@
 
 - name: Copy certificate to trusted anchors directory
   copy:
-    src: /etc/ssl/private/server.pem
+    remote_src: /etc/ssl/private/server.pem
     dest: /etc/pki/ca-trust/source/anchors/server.pem
 
 - name: Update CA trust on the host
