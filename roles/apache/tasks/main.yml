@@ -1,2 +1,17 @@
 ---
-# tasks file for apache
+- name: Call Certificate Role
+  include_role:
+    name: "certificates"
+
+- name: Ensure httpd is installed.
+  dnf: 
+    name: httpd
+    state: present
+
+- name: Generate httpd configuration
+  template:
+    src: httpd.conf.j2
+    dest: /etc/httpd/conf/httpd.conf
+    validate: httpd -t -f %s
+  notify:
+    - Restart Httpd

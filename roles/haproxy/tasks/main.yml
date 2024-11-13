@@ -12,7 +12,7 @@
   template:
     src: haproxy.conf.j2
     dest: /etc/haproxy/haproxy.conf
-    validate: haproxy -c -f /etc/haproxy/haproxy.conf
+    validate: haproxy -c -f %s
   notify:
     - Restart HAProxy
 
