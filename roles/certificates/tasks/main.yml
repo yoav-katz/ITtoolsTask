@@ -26,7 +26,13 @@
   delegate_to: localhost
   register: host_crt
 
+- name: Ensure /etc/ssl/private/server.pem directory exists
+  file: /etc/ssl/private/
+  state: directory
+  mode: '0755'
+
+
 - name: Assemble private key and certificate into PEM file
   copy:
     content: "{{ host_private_key.privatekey }}{{ host_crt.certificate }}"
-    dest: /etc/ssl/certs/private/server.pem
+    dest: /etc/ssl/private/server.pem
