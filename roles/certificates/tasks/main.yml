@@ -3,6 +3,7 @@
   pip:
     name: cryptography>=1.6
     state: present
+
 - name: Generate private key
   community.crypto.openssl_privatekey_pipe:
   register: host_private_key
@@ -21,7 +22,6 @@
     csr_content: "{{ host_csr.csr }}"
     ownca_path: /etc/ca/ca.crt
     ownca_privatekey_path: /etc/ca/private/ca.key
-    ownca_privatekey_passphrase: ""
     provider: ownca
   delegate_to: localhost
   register: host_crt
