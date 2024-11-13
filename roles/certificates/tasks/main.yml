@@ -1,7 +1,8 @@
 ---
-- name: Ensure Required Packages Installed
+- name: Ensure cryptography Packages Installed
   pip:
     name: cryptography>=1.6
+    state: present
 - name: Generate private key
   community.crypto.openssl_privatekey_pipe:
   register: host_private_key
