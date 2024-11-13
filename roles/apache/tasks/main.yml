@@ -12,5 +12,6 @@
   template:
     src: httpd.conf.j2
     dest: /etc/httpd/conf/httpd.conf
+    validate: httpd -t -f %s
   notify:
     - Restart Httpd

@@ -6,7 +6,7 @@
     - name: Import apache Role
       import_role:
         name: "apache"
-      when: "'webservers' in group_names"
+      when: "'webserver' in group_names"
     - name: Import haproxy Role
       import_role:
         name: "haproxy"
