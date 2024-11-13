@@ -26,7 +26,7 @@
   delegate_to: localhost
   register: host_crt
 
-- name: Ensure /etc/ssl/private/server.pem directory exists
+- name: Ensure /etc/ssl/private directory exists
   file: 
     path: /etc/ssl/private/
     state: directory
@@ -37,3 +37,12 @@
   copy:
     content: "{{ host_private_key.privatekey }}{{ host_crt.certificate }}"
     dest: /etc/ssl/private/server.pem
+
+- name: Copy certificate to trusted anchors directory
+  copy:
+    content: "{{ host_crt.certificate }}"
+    dest: /etc/pki/ca-trust/source/anchors/server.crt
+    mode: '0644'
+
+- name: Update CA trust on the host
+  command: update-ca-trust
