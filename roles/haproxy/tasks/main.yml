@@ -14,3 +14,7 @@
     dest: /etc/haproxy/haproxy.conf
   notify:
     - Restat HAProxy
+
+- name: Generate keepalived
+  import_tasks:
+    name: "keepalived"

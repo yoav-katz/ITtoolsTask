@@ -1,0 +1,32 @@
+vrrp_script chk_haproxy {
+    script "killall -0 haproxy"
+    interval 2 # check every 2 seconds
+    weight 2 # add 2 points of prio if OK
+}
+
+vrrp_instance VI_1 {
+        state {{ keepalived_state }}
+        interface eth1
+        virtual_router_id 51
+        priority {{ keepalived_priority }}
+        authentication {
+                auth_type PASS
+                auth_pass 1111
+        }
+        virtual_ipaddress {
+                {{ keepalived_ip }}/{{ keepalived_subnet }}
+        }
+        unicast_src_ip {{ inventory_hostname }} # this node IP
+
+        unicast_peer {
+            {% for server in group['webservers'] %}
+                {% if hostvars[server].inventory_hostname != inventory_hostname %}
+                    {{ hostvars[server].inventory_hostname }}
+                {% endif %}
+            {% endfor %}
+        }
+
+        track_script {
+                chk_haproxy
+        }
+}

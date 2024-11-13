@@ -1,0 +1,11 @@
+- name: Ensure HAProxy is installed.
+  dnf: 
+    name: keepalived
+    state: present
+
+- name: Generate HAProxy configuration
+  template:
+    src: keepalived.conf.j2
+    dest: /etc/keepalived/keepalived.conf
+  notify:
+    - Restat keepalived
