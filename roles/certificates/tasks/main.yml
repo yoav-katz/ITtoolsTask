@@ -1,12 +1,10 @@
 ---
 - name: Generate private key
   community.crypto.openssl_privatekey_pipe:
-    passphrase: "{{ host_passphrase }}"
   register: host_private_key
 
 - name: Generate CSR
   community.crypto.openssl_csr_pipe:
-    privatekey_passphrase: "{{ host_passphrase }}"
     privatekey_content: "{{ host_private_key.privatekey }}"
     common_name: "{{ ansible_fqdn }}"
     organization_name: "My Organization"
