@@ -4,10 +4,6 @@
     name: haproxy 
     state: present
 
-- name: Call Certificate Role
-  include_role:
-    name: "certificates"
-
 - name: Generate HAProxy configuration
   template:
     src: haproxy.conf.j2
@@ -17,4 +13,4 @@
 
 - name: Generate keepalived
   import_tasks:
-    name: "keepalived"
+    file: keepalived.yml
