@@ -1,2 +1,30 @@
 ---
-# tasks file for certificates
+- name: Generate private key
+  community.crypto.openssl_privatekey_pipe:
+    passphrase: "{{ host_passphrase }}"
+  register: host_private_key
+
+- name: Generate CSR
+  community.crypto.openssl_csr_pipe:
+    privatekey_passphrase: "{{ host_passphrase }}"
+    privatekey_content: "{{ host_private_key.privatekey }}"
+    common_name: "{{ ansible_fqdn }}"
+    organization_name: "My Organization"
+    locality_name: "Tel Aviv"
+    country_name: "IL"
+  register: host_csr
+
+- name: Sign the CSR using the CA
+  community.crypto.x509_certificate_pipe:
+    csr_content: "{{ host_csr.csr }}"
+    ownca_path: /etc/ca/ca.crt
+    ownca_privatekey_path: /etc/ca/private/ca.key
+    ownca_privatekey_passphrase: "{{ secret_ca_passphrase }}"
+    provider: ownca
+  delegate_to: localhost
+  register: host_crt
+
+- name: Copy the CRT to the servers
+  copy:
+    content: "{{ host_crt.certificate }}"
+    dest: /etc/ssl/certs/server.crt
