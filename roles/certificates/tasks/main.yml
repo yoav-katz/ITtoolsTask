@@ -1,4 +1,7 @@
 ---
+- name: Ensure Required Packages Installed
+  pip:
+    name: cryptography
 - name: Generate private key
   community.crypto.openssl_privatekey_pipe:
   register: host_private_key
