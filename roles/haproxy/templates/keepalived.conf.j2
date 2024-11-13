@@ -19,7 +19,7 @@ vrrp_instance VI_1 {
         unicast_src_ip {{ inventory_hostname }} # this node IP
 
         unicast_peer {
-            {% for server in group['haproxy'] %}
+            {% for server in groups['haproxy'] %}
                 {% if hostvars[server].inventory_hostname != inventory_hostname %}
                     {{ hostvars[server].inventory_hostname }}
                 {% endif %}
