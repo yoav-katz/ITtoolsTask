@@ -1,12 +1,12 @@
 ---
 - name: Generate private key
   community.crypto.openssl_privatekey_pipe:
-    passphrase: "{{ host_passphrase }}"
+    passphrase: ""
   register: host_private_key
 
 - name: Generate CSR
   community.crypto.openssl_csr_pipe:
-    privatekey_passphrase: "{{ host_passphrase }}"
+    privatekey_passphrase: ""
     privatekey_content: "{{ host_private_key.privatekey }}"
     common_name: "{{ ansible_fqdn }}"
     organization_name: "My Organization"
@@ -19,7 +19,7 @@
     csr_content: "{{ host_csr.csr }}"
     ownca_path: /etc/ca/ca.crt
     ownca_privatekey_path: /etc/ca/private/ca.key
-    ownca_privatekey_passphrase: "{{ secret_ca_passphrase }}"
+    ownca_privatekey_passphrase: ""
     provider: ownca
   delegate_to: localhost
   register: host_crt
