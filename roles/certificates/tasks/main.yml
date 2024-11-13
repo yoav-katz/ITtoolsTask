@@ -40,9 +40,8 @@
 
 - name: Copy certificate to trusted anchors directory
   copy:
-    content: "{{ host_crt.certificate }}"
-    dest: /etc/pki/ca-trust/source/anchors/server.crt
-    mode: '0644'
+    src: /etc/ssl/private/server.pem
+    dest: /etc/pki/ca-trust/source/anchors/server.pem
 
 - name: Update CA trust on the host
   command: update-ca-trust
