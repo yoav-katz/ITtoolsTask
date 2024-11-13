@@ -6,4 +6,4 @@
     - name: Import haproxy Role
       import_role:
         name: "haproxy"
-      when: "'webserver' in group_names"
+      when: "'haproxy' in group_names"
