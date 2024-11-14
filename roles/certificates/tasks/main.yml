@@ -10,13 +10,13 @@
 
 - name: debug
   debug:
-    msg: "IP:{{ inventory_hostname }},{{ subjet_critical_alt_name | default('') }}"
+    msg: "IP:{{ inventory_hostname }},{{ subjet_alt_names | default('') }}"
 
 - name: Generate CSR
   community.crypto.openssl_csr_pipe:
     privatekey_content: "{{ host_private_key.privatekey }}"
     common_name: "{{ ansible_fqdn }}"
-    subject_alt_name: "IP:{{ inventory_hostname }},{{ subjet_critical_alt_name | default('') }}"
+    subject_alt_name: "IP:{{ inventory_hostname }}{{ ',' if subjet_alt_names is defined }}{{ subjet_alt_names | default('') }}"
     subject_alt_name_critical: true
     organization_name: "{{ organization_details.name }}"
     locality_name: "{{ organization_details.locality }}"

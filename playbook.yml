@@ -5,9 +5,9 @@
   vars_files: 
   - vault.yml
   tasks:
-    - name: Set subjet_critical_alt_name
+    - name: Set subjet_alt_names
       set_fact:
-        subjet_critical_alt_name: "{{ groups['webserver'] | map('extract', hostvars, 'ansible_fqdn') | map('regex_replace', '^(.*)$', 'DNS:\\1') | join(',') }}"
+        subjet_alt_names: "{{ groups['webserver'] | map('extract', hostvars, 'ansible_fqdn') | map('regex_replace', '^(.*)$', 'DNS:\\1') | join(',') }}"
       when: "'haproxy' in group_names"
 
     - name: Import apache Role
