@@ -12,6 +12,8 @@
   community.crypto.openssl_csr_pipe:
     privatekey_content: "{{ host_private_key.privatekey }}"
     common_name: "{{ ansible_fqdn }}"
+    subject_alt_name: "IP:{{ inventory_hostname }}"
+    subject_alt_name_critical: "{{ subjet_critical_alt_name }}"
     organization_name: "{{ organization_details.name }}"
     locality_name: "{{ organization_details.locality }}"
     country_name: "{{  organization_details.country  }}"
@@ -38,6 +40,7 @@
     content: "{{ host_private_key.privatekey }}{{ host_crt.certificate }}"
     dest: /etc/ssl/private/server.pem
     mode: 0600
+  notify: "{{ handler_to_notify }}"
 
 - name: Copy certificate to trusted anchors directory
   copy:
