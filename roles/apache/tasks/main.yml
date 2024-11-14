@@ -27,7 +27,8 @@
     owner: apache
     group: apache
 
-- name: Ensure httpd is enabled
+- name: Ensure httpd service is enabled
   service:
     name: httpd
+    state: started
     enabled: true

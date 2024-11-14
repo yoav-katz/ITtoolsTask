@@ -2,3 +2,4 @@
 # defaults file for haproxy
 keepalived_ip: 192.168.0.6
 keepalived_subnet: 29
+keepalived_auth_pass: "1111"

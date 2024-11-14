@@ -21,6 +21,7 @@
 - name: Ensure HAProxy service is enabled
   service:
     name: haproxy
+    state: started
     enabled: true
 
 - name: Generate keepalived
