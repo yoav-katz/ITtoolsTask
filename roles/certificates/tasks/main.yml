@@ -17,6 +17,14 @@
     country_name: "{{  organization_details.country  }}"
   register: host_csr
 
+- name: Ca_content
+  debug:
+    msg: "{{ ca_content  }}"
+
+- name: Ca_key
+  debug:
+    msg: "{{ ca_privatekey_content  }}"
+
 - name: Sign the CSR using the CA
   community.crypto.x509_certificate_pipe:
     csr_content: "{{ host_csr.csr }}"
