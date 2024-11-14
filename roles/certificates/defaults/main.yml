@@ -1,6 +1,4 @@
 ---
-ca_content: ""
-ca_privatekey_content: ""
 organization_details:
   name: "My Organization"
   locality: "Tel Aviv"
