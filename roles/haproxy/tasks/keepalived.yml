@@ -4,6 +4,7 @@
       - keepalived_state in ['MASTER', 'BACKUP']
       - keepalived_priority is number
     fail_msg: "to configure Keepalived all hosts hosting it needs: keepalived_state and keepalived_priority"
+    quiet: yes
 
 - name: Ensure Keepalived is installed.
   dnf:
