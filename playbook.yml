@@ -2,6 +2,8 @@
   hosts: all
   become: true
   gather_facts: true
+  vars_files:
+    - vault.yml
   tasks:
     - name: Import apache Role
       import_role:
