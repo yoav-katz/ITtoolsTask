@@ -7,7 +7,7 @@
   tasks:
     - name: Set subjet_critical_alt_name
       set_fact:
-        subjet_critical_alt_name: "{{ groups['webservers'] | map('extract', hostvars, 'ansible_fqdn') | map('regex_replace', '^(.*)$', 'DNS:\\1') | join(',') }}"
+        subjet_critical_alt_name: "{{ groups['webserver'] | map('extract', hostvars, 'ansible_fqdn') | map('regex_replace', '^(.*)$', 'DNS:\\1') | join(',') }}"
       when: "'haproxy' in group_names"
 
     - name: Import apache Role
