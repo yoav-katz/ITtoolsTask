@@ -12,36 +12,38 @@
   community.crypto.openssl_csr_pipe:
     privatekey_content: "{{ host_private_key.privatekey }}"
     common_name: "{{ ansible_fqdn }}"
-    organization_name: "My Organization"
-    locality_name: "Tel Aviv"
-    country_name: "IL"
+    organization_name: "{{ organization_details.name }}"
+    locality_name: "{{ organization_details.locality }}"
+    country_name: "{{  organization_details.country  }}"
   register: host_csr
 
 - name: Sign the CSR using the CA
   community.crypto.x509_certificate_pipe:
     csr_content: "{{ host_csr.csr }}"
-    ownca_path: /etc/ca/ca.crt
-    ownca_privatekey_path: /etc/ca/private/ca.key
+    ownca_content: "{{ ca_content }}"
+    ownca_privatekey_content: "{{ ca_privatekey_content }}"
     provider: ownca
-  delegate_to: localhost
   register: host_crt
 
 - name: Ensure /etc/ssl/private directory exists
-  file: 
+  file:
     path: /etc/ssl/private/
     state: directory
-    mode: '0755'
+    mode: 0700
 
 
 - name: Assemble private key and certificate into PEM file
   copy:
     content: "{{ host_private_key.privatekey }}{{ host_crt.certificate }}"
     dest: /etc/ssl/private/server.pem
+    mode: 0600
 
 - name: Copy certificate to trusted anchors directory
   copy:
-    remote_src: /etc/ssl/private/server.pem
-    dest: /etc/pki/ca-trust/source/anchors/server.pem
+    content: "{{ ca_content }}"
+    dest: /etc/pki/ca-trust/source/anchors/root-CA.cert
+    mode: 0644
 
 - name: Update CA trust on the host
   command: update-ca-trust
+  creates: /etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt

@@ -1,11 +1,20 @@
-- name: Ensure HAProxy is installed.
-  dnf: 
+- name: Ensure Keepalived is installed.
+  dnf:
     name: keepalived
     state: present
 
-- name: Generate HAProxy configuration
+
+- name: Generate Keepalived configuration
   template:
     src: keepalived.conf.j2
     dest: /etc/keepalived/keepalived.conf
-  notify:
-    - Restart HAProxy
+    validate: keepalived -t -f %s
+    mode: 0644
+    owner: haproxy
+    group: haproxy
+  notify: Restart Keepalived
+
+- name: Ensure Keepalive service is enabled
+  service:
+    name: keepalived
+    enabled: true

@@ -4,7 +4,7 @@
     name: "certificates"
 
 - name: Ensure httpd is installed.
-  dnf: 
+  dnf:
     name: httpd
     state: present
 
@@ -13,5 +13,21 @@
     src: httpd.conf.j2
     dest: /etc/httpd/conf/httpd.conf
     validate: httpd -t -f %s
+    mode: 0644
+    owner: apache
+    group: apache
   notify:
     - Restart Httpd
+
+- name: Generate apache html
+  template:
+    src: index.html.j2
+    dest: /var/www/html/index.html
+    mode: 0644
+    owner: apache
+    group: apache
+
+- name: Ensure httpd is enabled
+  service:
+    name: httpd
+    enabled: true

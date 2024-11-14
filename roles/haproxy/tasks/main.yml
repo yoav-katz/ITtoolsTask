@@ -4,8 +4,8 @@
     name: "certificates"
 
 - name: Ensure HAProxy is installed.
-  dnf: 
-    name: haproxy 
+  dnf:
+    name: haproxy
     state: present
 
 - name: Generate HAProxy configuration
@@ -13,8 +13,15 @@
     src: haproxy.conf.j2
     dest: /etc/haproxy/haproxy.conf
     validate: haproxy -c -f %s
-  notify:
-    - Restart HAProxy
+    mode: 0644
+    owner: haproxy
+    group: haproxy
+  notify: Restart HAProxy
+
+- name: Ensure HAProxy service is enabled
+  service:
+    name: haproxy
+    enabled: true
 
 - name: Generate keepalived
   import_tasks:
