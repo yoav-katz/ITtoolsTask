@@ -46,4 +46,3 @@
 
 - name: Update CA trust on the host
   command: update-ca-trust
-  creates: /etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt
