@@ -10,7 +10,7 @@
 
 - name: debug
   debug:
-    msg: "IP:{{ inventory_hostname }},{{ subjet_alt_names | default('') }}"
+    msg: "IP:{{ inventory_hostname }}{{ ',' if subjet_alt_names is defined }}{{ subjet_alt_names | default('') }}"
 
 - name: Generate CSR
   community.crypto.openssl_csr_pipe:
