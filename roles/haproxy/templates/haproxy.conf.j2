@@ -28,10 +28,10 @@ frontend ha-front-ssl
 backend be_roundrobin
   balance roundrobin
   {% for server in groups['webserver'] %}
-  server {{ hostvars[server].ansible_nodename }} {{ hostvars[server].inventory_hostname }}:443 check ssl verify required ca-file /etc/ssl/private/server.pem
+  server {{ hostvars[server].ansible_nodename }} {{ hostvars[server].inventory_hostname }}:443 check ssl verify required ca-file  /etc/pki/ca-trust/source/anchors/root-CA.crt
   {% endfor %}
 
 {% for server in groups['webserver'] %}
 backend be_{{ hostvars[server].ansible_nodename }}
-    server {{ hostvars[server].ansible_nodename }} {{ hostvars[server].inventory_hostname }}:443 check ssl verify required ca-file /etc/ssl/private/server.pem
+    server {{ hostvars[server].ansible_nodename }} {{ hostvars[server].inventory_hostname }}:443 check ssl verify required ca-file  /etc/pki/ca-trust/source/anchors/root-CA.crt
 {% endfor %}
