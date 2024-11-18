@@ -11,7 +11,7 @@
 - name: Generate HAProxy configuration
   template:
     src: haproxy.conf.j2
-    dest: /etc/haproxy/haproxy.conf
+    dest: /etc/haproxy/haproxy.cnf
     validate: haproxy -c -f %s
     mode: 0644
     owner: haproxy
