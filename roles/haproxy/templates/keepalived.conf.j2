@@ -1,5 +1,5 @@
 vrrp_script chk_haproxy {
-    script "killall -0 haproxy"
+    script "pidof haproxy"
     interval 2 # check every 2 seconds
     weight 2 # add 2 points of prio if OK
 }
