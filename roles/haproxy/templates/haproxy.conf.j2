@@ -20,18 +20,18 @@ frontend ha-front-ssl
   mode http
   option forwardfor
   default_backend be_roundrobin
-  {% for server in groups['haproxy'] %}
+  {% for server in groups['webserver'] %}
   use_backend be_{{ hostvars[server].ansible_nodename }} if { req.hdr(host) {{ hostvars[server].ansible_fqdn }} }
   {% endfor %}
 
 # Backend Configuration
 backend be_roundrobin
   balance roundrobin
-  {% for server in groups['haproxy'] %}
+  {% for server in groups['webserver'] %}
   server {{ hostvars[server].ansible_nodename }} {{ hostvars[server].inventory_hostname }}:443 check ssl verify required ca-file /etc/ssl/private/server.pem
   {% endfor %}
 
-{% for server in groups['haproxy'] %}
+{% for server in groups['webserver'] %}
 backend be_{{ hostvars[server].ansible_nodename }}
     server {{ hostvars[server].ansible_nodename }} {{ hostvars[server].inventory_hostname }}:443 check ssl verify required ca-file /etc/ssl/private/server.pem
 {% endfor %}
