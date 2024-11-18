@@ -18,11 +18,15 @@ frontend ha-front-ssl
   bind *:443 ssl crt /etc/ssl/private/server.pem
   mode tcp
   option tcplog
+  http-request set-header X-Forwarded-For %[src]
+  http-request add-header X-Forwarded-Proto https
+  option http-server-close
   {% for server in groups['webserver'] %}
-  use_backend %[req.hdr(host),lower]
+  acl url_{{ hostvars[server].ansible_nodename }} hdr(host) -i {{ hostvars[server].ansible_fqdn }}
+  use_backend be_{{ hostvars[server].ansible_nodename }} if url_{{ hostvars[server].ansible_nodename }}
   {% endfor %}
 
 {% for server in groups['webserver'] %}
-backend {{ hostvars[server].ansible_fqdn }}
+backend be_{{ hostvars[server].ansible_nodename }}
     server {{ hostvars[server].ansible_nodename }} {{ hostvars[server].inventory_hostname }}:443 ssl verify required ca-file /etc/pki/ca-trust/source/anchors/root-CA.crt check
 {% endfor %}
