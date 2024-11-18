@@ -37,14 +37,14 @@
   file:
     path: /etc/ssl/private/
     state: directory
-    mode: 0700
+    mode: 0744
 
 
 - name: Assemble private key and certificate into PEM file
   copy:
     content: "{{ host_private_key.privatekey }}{{ host_crt.certificate }}"
     dest: /etc/ssl/private/server.pem
-    mode: 0600
+    mode: 0644
   notify: "{{ handler_to_notify }}"
 
 - name: Copy certificate to trusted anchors directory
