@@ -26,6 +26,7 @@
   template:
     src: index.html.j2
     dest: /var/www/html/index.html
+    validate: httpd -t -f %s
     mode: 0644
     owner: apache
     group: apache
