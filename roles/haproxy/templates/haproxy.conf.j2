@@ -19,10 +19,10 @@ frontend ha-front-ssl
   mode tcp
   option tcplog
   {% for server in groups['webserver'] %}
-  use_backend be_{{ hostvars[server].ansible_nodename }} if { req.hdr(host) -i {{ hostvars[server].ansible_fqdn }} }
+  use_backend %[req.hdr(host),lower]
   {% endfor %}
 
 {% for server in groups['webserver'] %}
-backend be_{{ hostvars[server].ansible_nodename }}
+backend {{ hostvars[server].ansible_fqdn }}
     server {{ hostvars[server].ansible_nodename }} {{ hostvars[server].inventory_hostname }}:443 ssl verify required ca-file /etc/pki/ca-trust/source/anchors/root-CA.crt check
 {% endfor %}

@@ -1,5 +1,4 @@
 ---
-
 - name: Ensure HAProxy is installed.
   dnf:
     name: haproxy
