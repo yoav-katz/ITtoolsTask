@@ -3,9 +3,12 @@
   include_role:
     name: "certificates"
 
-- name: Ensure httpd is installed.
+- name: Ensure httpd and his required packages ares installed.
   dnf:
-    name: httpd
+    name:
+      - httpd
+      - mod_ssl
+      - openssh
     state: present
 
 - name: Generate httpd configuration

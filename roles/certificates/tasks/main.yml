@@ -3,7 +3,7 @@
   pip:
     name: cryptography>=1.6
     state: present
-    executable: /usr/bin/python3.8 -m pip
+    extra_args: "--only-binary :all:"
 
 - name: Generate private key
   community.crypto.openssl_privatekey_pipe:
