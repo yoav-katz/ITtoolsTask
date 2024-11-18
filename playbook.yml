@@ -9,7 +9,7 @@
   tasks:
     - name: Set subjet_alt_name
       set_fact:
-        subjet_alt_name: "{{ groups['webserver'] | map('extract', hostvars, 'ansible_fqdn') | map('regex_replace', '^(.*)$', 'DNS:\\1') | join(',') }},DNS:keepalived.com,IP:{{ keepalived_ip }}"
+        subjet_alt_names: "{{ groups['webserver'] | map('extract', hostvars, 'ansible_fqdn') | map('regex_replace', '^(.*)$', 'DNS:\\1') | join(',') }},DNS:keepalived.com,IP:{{ keepalived_ip }}"
       when: "'haproxy' in group_names"
 
     - name: Import apache Role
