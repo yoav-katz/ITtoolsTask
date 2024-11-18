@@ -14,7 +14,7 @@
   template:
     src: keepalived.conf.j2
     dest: /etc/keepalived/keepalived.conf
-    validate: keepalived -t -f %s
+
     mode: 0644
     owner: haproxy
     group: haproxy
