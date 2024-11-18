@@ -1,5 +1,5 @@
 global
-  log 127.0.0.1 local0 info
+  log /dev/log local0 info
   user        haproxy
   group       haproxy
   daemon
@@ -8,7 +8,6 @@ global
 
 defaults
   log global
-  option httplog
   option  dontlognull
   mode  http
   timeout connect 5000
@@ -17,10 +16,10 @@ defaults
 
 frontend ha-front-ssl
   bind *:443 ssl crt /etc/ssl/private/server.pem
-  mode http
-  option forwardfor
+  mode tcp
+  option tcplog
   {% for server in groups['webserver'] %}
-  use_backend be_{{ hostvars[server].ansible_nodename }} if { req.hdr(host) -i {{ hostvars[server].ansible_fqdn }} }
+  use_backend be_{{ hostvars[server].ansible_nodename }} if { req.hdr(hosgt) -i {{ hostvars[server].ansible_fqdn }} }
   {% endfor %}
 
 {% for server in groups['webserver'] %}
