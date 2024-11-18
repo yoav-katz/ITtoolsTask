@@ -1,6 +1,5 @@
 global
-  log 127.0.0.1 local0
-  log /dev/log local0 info
+  log 127.0.0.1 local0 info
   user        haproxy
   group       haproxy
   daemon
@@ -21,7 +20,7 @@ frontend ha-front-ssl
   mode http
   option forwardfor
   {% for server in groups['webserver'] %}
-  use_backend be_{{ hostvars[server].ansible_nodename }} if { req.ssl_sni -i {{ hostvars[server].ansible_fqdn }} }
+  use_backend be_{{ hostvars[server].ansible_nodename }} if { req.hdr(host) -i {{ hostvars[server].ansible_fqdn }} }
   {% endfor %}
 
 {% for server in groups['webserver'] %}
