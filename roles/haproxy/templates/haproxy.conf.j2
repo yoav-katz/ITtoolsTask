@@ -1,5 +1,5 @@
 global
-  log /dev/log local0 debug
+  log 127.0.0.1 local2
   user        haproxy
   group       haproxy
   daemon
@@ -15,12 +15,11 @@ defaults
 
 frontend ha-front-ssl
   bind *:443 ssl crt /etc/ssl/private/server.pem
-  mode tcp
-  option ssl-hello-chk
+  mode http
+  option forwardfor
   default_backend be_roundrobin
-  tcp-request inspect-delay 5s  # Allow time to inspect the SNI during the handshake
   {% for server in groups['webserver'] %}
-  tcp-request content accept if { req.ssl_sni -i {{ hostvars[server].ansible_fqdn}} }
+  use_backend be_{{ hostvars[server].ansible_nodename }} if { req.ssl_sni -i {{ hostvars[server].ansible_fqdn }} }
   {% endfor %}
 
 # Backend Configuration
@@ -29,3 +28,8 @@ backend be_roundrobin
   {% for server in groups['webserver'] %}
   server {{ hostvars[server].ansible_nodename }} {{ hostvars[server].inventory_hostname }}:443 ssl verify required ca-file /etc/pki/ca-trust/source/anchors/root-CA.crt check
   {% endfor %}
+
+{% for server in groups['webserver'] %}
+backend be_{{ hostvars[server].ansible_nodename }}
+    server {{ hostvars[server].ansible_nodename }} {{ hostvars[server].inventory_hostname }}:443 ssl verify required ca-file /etc/pki/ca-trust/source/anchors/root-CA.crt check
+{% endfor %}
