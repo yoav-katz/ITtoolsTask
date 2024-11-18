@@ -4,7 +4,6 @@ global
   group       haproxy
   daemon
   maxconn     4000
-  ca-base /etc/ssl/certs
 
 defaults
   log global
@@ -28,10 +27,10 @@ frontend ha-front-ssl
 backend be_roundrobin
   balance roundrobin
   {% for server in groups['haproxy'] %}
-    server {{ hostvars[server].ansible_nodename }} {{ hostvars[server].inventory_hostname }}:443 check ssl verify required ca-file ca.crt
+    server {{ hostvars[server].ansible_nodename }} {{ hostvars[server].inventory_hostname }}:443 check ssl verify required ca-file /etc/ssl/private/server.pem
   {% endfor %}
 
 {% for server in groups['haproxy'] %}
 backend be_{{ hostvars[server].ansible_nodename }}
-    server {{ hostvars[server].ansible_nodename }} {{ hostvars[server].inventory_hostname }}:443 check ssl verify required ca-file ca.crt
+    server {{ hostvars[server].ansible_nodename }} {{ hostvars[server].inventory_hostname }}:443 check ssl verify required ca-file /etc/ssl/private/server.pem
 {% endfor %}
