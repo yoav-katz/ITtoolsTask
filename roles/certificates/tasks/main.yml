@@ -13,7 +13,7 @@
   community.crypto.openssl_csr_pipe:
     privatekey_content: "{{ host_private_key.privatekey }}"
     common_name: "{{ ansible_fqdn }}"
-    subject_alt_name: "IP:{{ inventory_hostname }},DNS:localhost,DNS:{{ ansible_fqdn }}{{ ',' if subjet_alt_names is defined }}{{ subjet_alt_names | default('') }}"
+    subject_alt_name: "IP:{{ inventory_hostname }},DNS:localhost,DNS:{{ ansible_fqdn }}{{ ',' if subject_alt_names is defined }}{{ subject_alt_names | default('') }}"
     subject_alt_name_critical: true
     organization_name: "{{ organization_details.name }}"
     locality_name: "{{ organization_details.locality }}"
