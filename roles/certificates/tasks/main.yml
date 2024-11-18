@@ -1,9 +1,12 @@
 ---
+- name: Ensure setuptools_rust is installed
+  pip:
+    name: setuptools_rust
+    state: present
+
 - name: Ensure cryptography Package Installed
   pip:
-    name:
-      - setuptools_rust
-      - cryptography>=1.6
+    name: cryptography>=1.6
     state: present
 
 - name: Generate private key
