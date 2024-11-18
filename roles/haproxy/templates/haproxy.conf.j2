@@ -19,7 +19,7 @@ frontend ha-front-ssl
   mode tcp
   option tcplog
   {% for server in groups['webserver'] %}
-  use_backend be_{{ hostvars[server].ansible_nodename }} if { req.hdr(hosgt) -i {{ hostvars[server].ansible_fqdn }} }
+  use_backend be_{{ hostvars[server].ansible_nodename }} if { req.hdr(host) -i {{ hostvars[server].ansible_fqdn }} }
   {% endfor %}
 
 {% for server in groups['webserver'] %}
