@@ -19,9 +19,10 @@ frontend ha-front-ssl
   bind *:443 ssl crt /etc/ssl/private/server.pem
   mode http
   option forwardfor
+  option http-tunnel
   default_backend be_roundrobin
   {% for server in groups['webserver'] %}
-  use_backend be_{{ hostvars[server].ansible_nodename }} if { req.hdr(host) {{ hostvars[server].ansible_fqdn }} }
+  use_backend be_{{ hostvars[server].ansible_nodename }} if { hdr(host) -i {{ hostvars[server].ansible_fqdn }} }
   {% endfor %}
 
 # Backend Configuration
