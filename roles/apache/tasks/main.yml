@@ -1,8 +1,4 @@
 ---
-- name: Call Certificate Role
-  include_role:
-    name: "certificates"
-
 - name: Ensure httpd and his required packages ares installed.
   dnf:
     name:

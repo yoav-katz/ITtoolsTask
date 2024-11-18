@@ -1,7 +1,4 @@
 ---
-- name: Call Certificate Role
-  include_role:
-    name: "certificates"
 
 - name: Ensure HAProxy is installed.
   dnf:
