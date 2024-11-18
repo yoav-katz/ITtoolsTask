@@ -1,5 +1,5 @@
 global
-  log 127.0.0.1 local2
+  log /dev/log local0 debug
   user        haproxy
   group       haproxy
   daemon
@@ -29,8 +29,3 @@ backend be_roundrobin
   {% for server in groups['webserver'] %}
   server {{ hostvars[server].ansible_nodename }} {{ hostvars[server].inventory_hostname }}:443 ssl verify required ca-file /etc/pki/ca-trust/source/anchors/root-CA.crt check
   {% endfor %}
-
-{% for server in groups['webserver'] %}
-backend be_{{ hostvars[server].ansible_nodename }}
-    server {{ hostvars[server].ansible_nodename }} {{ hostvars[server].inventory_hostname }}:443 ssl verify required ca-file /etc/pki/ca-trust/source/anchors/root-CA.crt check
-{% endfor %}
