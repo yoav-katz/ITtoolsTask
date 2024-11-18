@@ -1,10 +1,5 @@
-global_defs {
-    enable_script_security
-}
-
-vrrp_script chk_haproxy {
-    script "pidof haproxy"
-    interval 2 # check every 2 seconds
+vrrp_track_process track_haproxy {
+    process haproxy
     weight 2 # add 2 points of prio if OK
 }
 
@@ -31,6 +26,6 @@ vrrp_instance VI_1 {
         }
 
         track_script {
-                chk_haproxy
+            track_haproxy
         }
 }
