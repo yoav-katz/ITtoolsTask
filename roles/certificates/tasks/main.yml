@@ -9,10 +9,6 @@
   community.crypto.openssl_privatekey_pipe:
   register: host_private_key
 
-- name: Debug
-  debug:
-    msg: "IP:{{ inventory_hostname }},DNS:{{ ansible_fqdn }}{{ ',' if subjet_alt_names is defined }}{{ subjet_alt_names | default('') }}"
-
 - name: Generate CSR
   community.crypto.openssl_csr_pipe:
     privatekey_content: "{{ host_private_key.privatekey }}"
