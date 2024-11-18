@@ -16,9 +16,11 @@ defaults
 frontend ha-front-ssl
   bind *:443 ssl crt /etc/ssl/private/server.pem
   mode tcp
+  option ssl-hello-chk
   default_backend be_roundrobin
+  tcp-request inspect-delay 5s  # Allow time to inspect the SNI during the handshake
   {% for server in groups['webserver'] %}
-  use_backend be_{{ hostvars[server].ansible_nodename }} if { req.ssl_sni -i {{ hostvars[server].ansible_fqdn }} }
+  tcp-request content accept if { req.ssl_sni -i {{ hostvars[server].ansible_fqdn}} }
   {% endfor %}
 
 # Backend Configuration
