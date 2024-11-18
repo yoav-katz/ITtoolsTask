@@ -1,13 +1,9 @@
 ---
-- name: Ensure setuptools_rust is installed
-  pip:
-    name: setuptools_rust
-    state: present
-
 - name: Ensure cryptography Package Installed
   pip:
     name: cryptography>=1.6
     state: present
+    executable: /usr/bin/python3.8 -m pip
 
 - name: Generate private key
   community.crypto.openssl_privatekey_pipe:
