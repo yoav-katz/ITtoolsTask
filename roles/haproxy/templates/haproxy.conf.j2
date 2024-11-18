@@ -15,8 +15,7 @@ defaults
 
 frontend ha-front-ssl
   bind *:443 ssl crt /etc/ssl/private/server.pem
-  mode http
-  option forwardfor
+  mode tcp
   default_backend be_roundrobin
   {% for server in groups['webserver'] %}
   use_backend be_{{ hostvars[server].ansible_nodename }} if { req.ssl_sni -i {{ hostvars[server].ansible_fqdn }} }
