@@ -16,8 +16,8 @@
     common_name: "{{ ansible_fqdn }}"
     subject_alt_name: >
       {{
-        (subject_alt_names | default([]) | split(',')) +
-        ['DNS:localhost', 'IP:' + inventory_hostname, 'DNS:' + ansible_fqdn]
+        [ 'DNS:localhost', 'IP:' + inventory_hostname, 'DNS:' + ansible_fqdn ] +
+        ( subject_alt_names | default('') | split(',') | select('match', '.+') )
       }}
     subject_alt_name_critical: true
     organization_name: "{{ organization_details.name }}"
