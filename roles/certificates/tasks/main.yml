@@ -6,14 +6,13 @@
     extra_args: "--only-binary :all:"
 
 - name: Generate private key
-  community.crypto.openssl_privatekey:
-    path: /etc/ssl/private/server.key
+  community.crypto.openssl_privatekey_pipe:
     size: 2048
   register: host_private_key
 
 - name: Create certificate signing request (CSR) for new certificate
   community.crypto.openssl_csr_pipe:
-    privatekey_path: /etc/ssl/private/server.key
+    privatekey_content: "{{ host_private_key.privatekey }}"
     common_name: "{{ ansible_fqdn }}"
     subject_alt_name: >
       {% if subject_alt_names is defined %}
@@ -33,7 +32,7 @@
   community.crypto.x509_certificate_pipe:
     csr_content: "{{ host_csr.csr }}"
     provider: ownca
-    ownca_path: /etc/ca/ca.pem
+    ownca_path: /etc/ca/ca.crt
     ownca_privatekey_path: /etc/ca/private/ca.key
     ownca_not_before: "-1d"
     ownca_not_after: +365d
@@ -48,7 +47,7 @@
 
 - name: Assemble private key and certificate into PEM file
   copy:
-    content: "{{ host_crt.certificate }}"
+    content: "{{ host_private_key.privatekey }}{{ host_crt.certificate }}"
     dest: /etc/ssl/private/server.pem
     mode: 0644
   notify: "{{ handler_to_notify }}"
