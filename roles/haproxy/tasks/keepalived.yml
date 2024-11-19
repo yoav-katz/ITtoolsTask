@@ -1,0 +1,27 @@
+- name: Validate all keepalived host vars exists
+  assert:
+    that:
+      - keepalived_state in ['MASTER', 'BACKUP']
+      - keepalived_priority is number
+    fail_msg: "to configure Keepalived all hosts hosting it needs: keepalived_state and keepalived_priority"
+
+- name: Ensure Keepalived is installed.
+  dnf:
+    name: keepalived
+    state: present
+
+- name: Generate Keepalived configuration
+  template:
+    src: keepalived.conf.j2
+    dest: /etc/keepalived/keepalived.conf
+    validate: keepalived -t -f %s
+    mode: 0644
+    owner: haproxy
+    group: haproxy
+  notify: Restart Keepalived
+
+- name: Ensure Keepalive service is enabled
+  service:
+    name: keepalived
+    state: started
+    enabled: true

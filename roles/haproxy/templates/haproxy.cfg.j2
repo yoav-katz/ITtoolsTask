@@ -1,0 +1,32 @@
+global
+  log /dev/log local0 info
+  user        haproxy
+  group       haproxy
+  daemon
+  maxconn     4000
+  tune.ssl.default-dh-param 2048
+
+defaults
+  log global
+  option  dontlognull
+  mode  http
+  timeout connect 5000
+  timeout client 50000
+  timeout server 50000
+
+frontend ha-front-ssl
+  bind *:443 ssl crt /etc/ssl/private/server.pem
+  mode tcp
+  option tcplog
+  http-request set-header X-Forwarded-For %[src]
+  http-request add-header X-Forwarded-Proto https
+  option http-server-close
+  {% for server in groups['webserver'] %}
+  acl url_{{ hostvars[server].ansible_nodename }} hdr(host) -i {{ hostvars[server].ansible_fqdn }}
+  use_backend be_{{ hostvars[server].ansible_nodename }} if url_{{ hostvars[server].ansible_nodename }}
+  {% endfor %}
+
+{% for server in groups['webserver'] %}
+backend be_{{ hostvars[server].ansible_nodename }}
+    server {{ hostvars[server].ansible_nodename }} {{ hostvars[server].inventory_hostname }}:443 ssl verify required ca-file /etc/pki/ca-trust/source/anchors/root-CA.crt check
+{% endfor %}

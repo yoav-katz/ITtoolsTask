@@ -1,0 +1,33 @@
+---
+- name: Ensure httpd and his required packages ares installed.
+  dnf:
+    name:
+      - httpd
+      - mod_ssl
+      - openssh
+    state: present
+
+- name: Generate httpd configuration
+  template:
+    src: httpd.conf.j2
+    dest: /etc/httpd/conf/httpd.conf
+    validate: httpd -t -f %s
+    mode: 0644
+    owner: apache
+    group: apache
+  notify:
+    - Restart Httpd
+
+- name: Generate apache html
+  template:
+    src: index.html.j2
+    dest: /var/www/html/index.html
+    mode: 0644
+    owner: apache
+    group: apache
+
+- name: Ensure httpd service is enabled
+  service:
+    name: httpd
+    state: started
+    enabled: true

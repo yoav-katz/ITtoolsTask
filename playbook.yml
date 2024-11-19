@@ -1,0 +1,23 @@
+- name: Configure Task
+  hosts: all
+  become: true
+  gather_facts: true
+  vars_files: 
+  - vault.yml
+  vars:
+    keepalived_ip: 192.168.0.6
+  tasks:
+    - name: Set subject_alt_names
+      set_fact:
+        subject_alt_names: "{{ groups['webserver'] | map('extract', hostvars, 'ansible_fqdn') | map('regex_replace', '^(.*)$', 'DNS:\\1') | join(',') }},DNS:keepalived.com,IP:{{ keepalived_ip }}"
+      when: "'haproxy' in group_names"
+
+    - name: Import apache Role
+      import_role:
+        name: "apache"
+      when: "'webserver' in group_names"
+
+    - name: Import haproxy Role 
+      import_role:
+        name: "haproxy"
+      when: "'haproxy' in group_names"

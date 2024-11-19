@@ -1,0 +1,50 @@
+---
+- name: Ensure cryptography Package Installed
+  pip:
+    name: cryptography>=1.6
+    state: present
+    extra_args: "--only-binary :all:"
+
+- name: Generate private key
+  community.crypto.openssl_privatekey_pipe:
+    size: 2048
+  register: host_private_key
+
+- name: Create certificate signing request (CSR) for new certificate
+  community.crypto.openssl_csr_pipe:
+    privatekey_content: "{{ host_private_key.privatekey }}"
+    common_name: "{{ ansible_fqdn }}"
+    subject_alt_name: >
+      {{
+        [ 'DNS:localhost', 'IP:' + inventory_hostname, 'DNS:' + ansible_fqdn ] +
+        ( subject_alt_names | default('') | split(',') | select('match', '.+') )
+      }}
+    subject_alt_name_critical: true
+    organization_name: "{{ organization_details.name }}"
+    locality_name: "{{ organization_details.locality }}"
+    country_name: "{{  organization_details.country  }}"
+  register: host_csr
+
+- name: Sign the CSR using the CA
+  community.crypto.x509_certificate_pipe:
+    csr_content: "{{ host_csr.csr }}"
+    provider: ownca
+    ownca_path: /etc/ca/ca.crt
+    ownca_privatekey_path: /etc/ca/private/ca.key
+    ownca_not_before: "-1d"
+    ownca_not_after: +365d
+  register: host_crt
+  delegate_to: localhost
+
+- name: Ensure /etc/ssl/private directory exists
+  file:
+    path: /etc/ssl/private/
+    state: directory
+    mode: 0744
+
+- name: Assemble private key and certificate into PEM file
+  copy:
+    content: "{{ host_private_key.privatekey }}{{ host_crt.certificate }}"
+    dest: /etc/ssl/private/server.pem
+    mode: 0644
+  notify: "{{ handler_to_notify }}"

@@ -1,0 +1,14 @@
+galaxy_info:
+  role_name: certificates
+  author: Yoav Katz
+  description: Creating certificates to using a CA given as a variable
+  platforms:
+    - name: Centos8
+      versions:
+        - all
+
+  license: MIT
+
+  min_ansible_version: 2.1
+
+dependencies: []

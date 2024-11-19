@@ -1,0 +1,3 @@
+handler_to_notify:
+  - "Restart HAProxy"
+  - "Restart Keepalived"

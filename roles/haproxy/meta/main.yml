@@ -1,0 +1,14 @@
+galaxy_info:
+  role_name: haproxy
+  author: Yoav Katz
+  description: Creating haproxy with keepalived configuration that passes requests to webserver host group
+  platforms:
+    - name: Centos8
+      versions:
+        - all
+
+  license: MIT
+
+  min_ansible_version: 2.1
+
+dependencies: ['certificates']

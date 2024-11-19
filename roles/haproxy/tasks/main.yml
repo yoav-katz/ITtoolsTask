@@ -1,0 +1,25 @@
+---
+- name: Ensure HAProxy is installed.
+  dnf:
+    name: haproxy
+    state: present
+
+- name: Generate HAProxy configuration
+  template:
+    src: haproxy.cfg.j2
+    dest: /etc/haproxy/haproxy.cfg
+    validate: haproxy -c -f %s
+    mode: 0644
+    owner: haproxy
+    group: haproxy
+  notify: Restart HAProxy
+
+- name: Ensure HAProxy service is enabled
+  service:
+    name: haproxy
+    state: started
+    enabled: true
+
+- name: Generate keepalived
+  import_tasks:
+    file: keepalived.yml
