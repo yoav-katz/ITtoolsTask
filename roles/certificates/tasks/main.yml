@@ -15,7 +15,9 @@
   community.crypto.openssl_csr_pipe:
     privatekey_path: /etc/ssl/private/server.key
     common_name: "{{ ansible_fqdn }}"
-    subject_alt_name:
+    subject_alt_name: 
+      - "DNS:localhost"
+      - "IP:{{ inventory_hostname }}"
       - "DNS:{{ ansible_fqdn }}"
     subject_alt_name_critical: true
     organization_name: "{{ organization_details.name }}"
