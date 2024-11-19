@@ -15,10 +15,14 @@
   community.crypto.openssl_csr_pipe:
     privatekey_path: /etc/ssl/private/server.key
     common_name: "{{ ansible_fqdn }}"
-    subject_alt_name: 
+    subject_alt_name: >
+      {% if subject_alt_names is defined %}
+      {{ subject_alt_names.split(',') + ['DNS:localhost', 'IP:{{ inventory_hostname }}', 'DNS:{{ ansible_fqdn }}'] }}
+      {% else %}
       - "DNS:localhost"
       - "IP:{{ inventory_hostname }}"
       - "DNS:{{ ansible_fqdn }}"
+      {% endif %}
     subject_alt_name_critical: true
     organization_name: "{{ organization_details.name }}"
     locality_name: "{{ organization_details.locality }}"
