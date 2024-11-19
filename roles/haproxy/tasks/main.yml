@@ -6,7 +6,7 @@
 
 - name: Generate HAProxy configuration
   template:
-    src: haproxy.conf.j2
+    src: haproxy.cfg.j2
     dest: /etc/haproxy/haproxy.cfg
     validate: haproxy -c -f %s
     mode: 0644
