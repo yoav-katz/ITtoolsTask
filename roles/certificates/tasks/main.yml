@@ -16,7 +16,7 @@
     common_name: "{{ ansible_fqdn }}"
     subject_alt_name: >
       {{
-        (subject_alt_names | default('') | split(',') | list) +
+        (subject_alt_names | default([]) | split(',')) +
         ['DNS:localhost', 'IP:' + inventory_hostname, 'DNS:' + ansible_fqdn]
       }}
     subject_alt_name_critical: true
