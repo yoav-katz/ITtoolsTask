@@ -6,18 +6,17 @@
     extra_args: "--only-binary :all:"
 
 - name: Generate private key
-  community.crypto.openssl_privatekey_pipe:
+  community.crypto.openssl_privatekey:
+    path: /etc/ssl/private/server.key
+    size: 2048
   register: host_private_key
 
-- name: debug
-  debug:
-    msg: "IP:{{ inventory_hostname }},DNS:localhost,DNS:{{ ansible_fqdn }}{{ ',' if subject_alt_names is defined }}{{ subject_alt_names | default('') }}"
-
-- name: Generate CSR
+- name: Create certificate signing request (CSR) for new certificate
   community.crypto.openssl_csr_pipe:
-    privatekey_content: "{{ host_private_key.privatekey }}"
+    privatekey_path: /etc/ssl/private/server.key
     common_name: "{{ ansible_fqdn }}"
-    subject_alt_name: "IP:{{ inventory_hostname }},DNS:localhost,DNS:{{ ansible_fqdn }}{{ ',' if subject_alt_names is defined }}{{ subject_alt_names | default('') }}"
+    subject_alt_name: >-
+      "IP:{{ inventory_hostname }},DNS:localhost,DNS:{{ ansible_fqdn }}{{ ',' if subject_alt_names is defined }}{{ subject_alt_names | default('') }}"
     subject_alt_name_critical: true
     organization_name: "{{ organization_details.name }}"
     locality_name: "{{ organization_details.locality }}"
@@ -27,9 +26,11 @@
 - name: Sign the CSR using the CA
   community.crypto.x509_certificate_pipe:
     csr_content: "{{ host_csr.csr }}"
-    ownca_path: /etc/ca/ca.crt
-    ownca_privatekey_path: /etc/ca/private/ca.key
     provider: ownca
+    ownca_path: /etc/ca/ca.pem
+    ownca_privatekey_path: /etc/ca/private/ca.key
+    ownca_not_before: "-1d"
+    ownca_not_after: +365d
   register: host_crt
   delegate_to: localhost
 
@@ -39,19 +40,9 @@
     state: directory
     mode: 0744
 
-
 - name: Assemble private key and certificate into PEM file
   copy:
-    content: "{{ host_private_key.privatekey }}{{ host_crt.certificate }}"
+    content: "{{ host_crt.certificate }}"
     dest: /etc/ssl/private/server.pem
     mode: 0644
   notify: "{{ handler_to_notify }}"
-
-- name: Copy certificate to trusted anchors directory
-  copy:
-    src: /etc/ca/ca.crt
-    dest: /etc/pki/ca-trust/source/anchors/root-CA.crt
-    mode: 0644
-
-- name: Update CA trust on the host
-  command: update-ca-trust
